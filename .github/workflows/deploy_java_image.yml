@@ -5,6 +5,9 @@ on:
       environment:
         required: true
         type: string
+      image_name:
+        required: true
+        type: string
       maven_repository_name:
         required: true
         type: string
@@ -48,9 +51,7 @@ jobs:
 
       - name: Set derived image full name
         run: >-
-          echo "FULL_IMAGE_NAME=${{ inputs.gcp_region }}-docker.pkg.dev/${{
-          inputs.project_id }}/${{ inputs.gcp_registry_name }}/${{
-          inputs.image_name }}" >> $GITHUB_ENV
+          echo "FULL_IMAGE_NAME=${{ inputs.gcp_region }}-docker.pkg.dev/${{ inputs.project_id }}/${{ inputs.gcp_registry_name }}/${{inputs.image_name }}" >> $GITHUB_ENV
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -84,9 +85,6 @@ jobs:
             -Dquarkus.container-image.image=${{ env.FULL_IMAGE_NAME }}
       - name: Push Quarkus Application Image
         run: >
-          docker tag "${{ env.FULL_IMAGE_NAME }}" "${{ env.FULL_IMAGE_NAME
-          }}:${{ github.sha }}"
-
+          docker tag "${{ env.FULL_IMAGE_NAME }}" "${{ env.FULL_IMAGE_NAME }}:${{ github.sha }}"
           docker push "${{ env.FULL_IMAGE_NAME }}:${{ github.sha }}"
-
           docker push "${{ env.FULL_IMAGE_NAME }}:latest"
