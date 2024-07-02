@@ -11,8 +11,8 @@ class BasePublicCloudRun extends BasePrivateCloudRun_js_1.BasePrivateCloudRun {
         super(scope, config);
         this.config = config;
     }
-    configure() {
-        const privateCloudRun = super.configure();
+    configure(privateVPCName) {
+        const privateCloudRun = super.configure(privateVPCName);
         this.configureDomainMapping(privateCloudRun);
         this.configurePublicAccess(privateCloudRun);
         return privateCloudRun;

@@ -17,7 +17,7 @@ export declare class BasePrivateCloudRun {
     config: BasePrivateCloudRunConfig;
     scope: Construct;
     constructor(scope: Construct, config: BasePrivateCloudRunConfig);
-    configure(): CloudRunV2Service;
-    privateVPC(): DataGoogleComputeNetwork;
+    configure(privateVPCName?: string): CloudRunV2Service;
+    privateVPC(privateVPCName?: string): DataGoogleComputeNetwork;
     privateCloudRunService(config: BasePrivateCloudRunConfig, vpcForPrivateAccess: DataGoogleComputeNetwork): CloudRunV2Service;
 }

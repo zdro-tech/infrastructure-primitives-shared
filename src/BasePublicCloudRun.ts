@@ -18,8 +18,8 @@ export class BasePublicCloudRun extends BasePrivateCloudRun {
     this.config = config
   }
 
-  configure(): CloudRunV2Service {
-    const privateCloudRun = super.configure()
+  configure(privateVPCName?: string): CloudRunV2Service {
+    const privateCloudRun = super.configure(privateVPCName)
     this.configureDomainMapping(privateCloudRun)
     this.configurePublicAccess(privateCloudRun)
     return privateCloudRun

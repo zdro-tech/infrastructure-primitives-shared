@@ -10,14 +10,14 @@ class BasePrivateCloudRun {
         this.config = config;
         this.scope = scope;
     }
-    configure() {
-        const privateVPC = this.privateVPC();
+    configure(privateVPCName) {
+        const privateVPC = this.privateVPC(privateVPCName);
         const cloudRun = this.privateCloudRunService(this.config, privateVPC);
         return cloudRun;
     }
-    privateVPC() {
+    privateVPC(privateVPCName) {
         return new data_google_compute_network_1.DataGoogleComputeNetwork(this.scope, 'retrieve-cloud-run-vpc', {
-            name: 'h9th-cloud-run-postgres-redis'
+            name: privateVPCName ?? 'h9th-cloud-run-postgres-redis'
         });
     }
     privateCloudRunService(config, vpcForPrivateAccess) {

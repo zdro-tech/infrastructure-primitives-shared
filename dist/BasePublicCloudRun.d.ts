@@ -8,7 +8,7 @@ export interface BasePublicCloudRunConfig extends BasePrivateCloudRunConfig {
 export declare class BasePublicCloudRun extends BasePrivateCloudRun {
     config: BasePublicCloudRunConfig;
     constructor(scope: Construct, config: BasePublicCloudRunConfig);
-    configure(): CloudRunV2Service;
+    configure(privateVPCName?: string): CloudRunV2Service;
     configurePublicAccess(cloudRun: CloudRunV2Service): void;
     configureDomainMapping(cloudRun: CloudRunV2Service): CloudRunDomainMapping;
 }
