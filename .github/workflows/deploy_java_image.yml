@@ -29,7 +29,7 @@ on:
     secrets:
       GCP_SERVICE_ACCOUNT_FILE:
         required: true
-      GIHUB_ACCESS_TOKEN:
+      GITUB_ACCESS_TOKEN:
         required: false
 jobs:
   deploy_image:
