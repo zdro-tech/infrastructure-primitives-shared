@@ -1,0 +1,77 @@
+name: Run Postgres Script
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      command:
+        required: true
+        type: string
+      project_id:
+        required: true
+        type: string
+      gcp_region:
+        required: true
+        type: string
+      gcp_tf_bucket_name:
+        required: true
+        type: string
+      gcp_registry_name:
+        required: true
+        type: string
+      gcp_zone:
+        required: false
+        type: string
+      gcp_registry_hostname:
+        required: false
+        type: string
+    secrets:
+      GCP_SERVICE_ACCOUNT_FILE:
+          required: true
+      GITUB_ACCESS_TOKEN:
+        required: true
+
+jobs:
+  run_postgres_script:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set environment variables
+        run: |
+          echo "ENVIRONMENT=${{ inputs.environment }}" >> $GITHUB_ENV
+          echo "VARIABLES_CONFIG_PATH=${{ inputs.environment }}" >> $GITHUB_ENV
+          echo "GCP_PROJECT_ID=${{ inputs.project_id }}" >> $GITHUB_ENV
+          echo "GCP_REGION=${{ inputs.gcp_region }}" >> $GITHUB_ENV
+          echo "GCP_ZONE=${{ inputs.gcp_zone }}" >> $GITHUB_ENV
+          echo "GCP_TF_BUCKET_NAME=${{ inputs.gcp_tf_bucket_name }}" >> $GITHUB_ENV
+          echo "GCP_CONTAINER_REGISTRY_NAME=${{ inputs.gcp_registry_name }}" >> $GITHUB_ENV
+          echo "GCP_CONTAINER_REGISTRY_HOSTNAME=${{ inputs.gcp_registry_hostname }}" >> $GITHUB_ENV
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Google Auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_FILE }}
+          project_id: ${{ inputs.project_id }}
+          token_format: access_token
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Set up Git credentials
+        run: |
+          git config --global url.https://${{ secrets.GITUB_ACCESS_TOKEN }}@github.com/.insteadOf ssh://git@github.com/
+
+      - name: Install dependencies and build
+        run: |
+          npm install
+          npm run build
+
+      - name: Run Postgres Script
+        run: ${{ inputs.command }}

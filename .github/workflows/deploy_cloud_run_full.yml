@@ -1,0 +1,89 @@
+name: Deploy Workflow
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      image_name:
+        required: true
+        type: string
+      stack_name:
+        required: true
+        type: string
+      cloud_run_service_name:
+        required: true
+        type: string
+      project_id:
+        required: true
+        type: string
+      gcp_region:
+        required: true
+        type: string
+      gcp_tf_bucket_name:
+        required: true
+        type: string
+      gcp_registry_name:
+        required: true
+        type: string
+      gcp_zone:
+        required: false
+        type: string
+      gcp_registry_hostname:
+        required: false
+        type: string
+    secrets:
+      GCP_SERVICE_ACCOUNT_FILE:
+        required: true
+      GITUB_ACCESS_TOKEN:
+        required: true
+
+jobs:
+  deploy_image:
+    uses: aloe-chat/infra-primitives-shared/.github/workflows/deploy_image.yml@main
+    with:
+      environment: ${{ inputs.environment }}
+      image_name: ${{ inputs.image_name }}
+      project_id: ${{ inputs.project_id }}
+      gcp_region: ${{ inputs.gcp_region }}
+      gcp_tf_bucket_name: ${{ inputs.gcp_tf_bucket_name }}
+      gcp_registry_name: ${{ inputs.gcp_registry_name }}
+      gcp_zone: ${{ inputs.gcp_zone }}
+      gcp_registry_hostname: ${{ inputs.gcp_registry_hostname }}
+    secrets:
+      GCP_SERVICE_ACCOUNT_FILE: ${{ secrets.GCP_SERVICE_ACCOUNT_FILE }}
+      GITUB_ACCESS_TOKEN: ${{ secrets.GITUB_ACCESS_TOKEN }}
+
+  setup_infra:
+    uses: aloe-chat/infra-primitives-shared/.github/workflows/deploy_infra.yml@main
+    with:
+      environment: ${{ inputs.environment }}
+      stack_name: ${{ inputs.stack_name }}
+      project_id: ${{ inputs.project_id }}
+      gcp_region: ${{ inputs.gcp_region }}
+      gcp_tf_bucket_name: ${{ inputs.gcp_tf_bucket_name }}
+      gcp_registry_name: ${{ inputs.gcp_registry_name }}
+      gcp_zone: ${{ inputs.gcp_zone }}
+      gcp_registry_hostname: ${{ inputs.gcp_registry_hostname }}
+
+    secrets:
+      GCP_SERVICE_ACCOUNT_FILE: ${{ secrets.GCP_SERVICE_ACCOUNT_FILE }}
+      GITUB_ACCESS_TOKEN: ${{ secrets.GITUB_ACCESS_TOKEN }}
+
+  deploy_new_version:
+    uses: aloe-chat/infra-primitives-shared/.github/workflows/deploy_cloud_run.yml@main
+    needs: [setup_infra, deploy_image]
+    with:
+      environment: ${{ inputs.environment }}
+      image_name: ${{ inputs.image_name }}
+      cloud_run_service_name: ${{ inputs.cloud_run_service_name }}
+      project_id: ${{ inputs.project_id }}
+      gcp_region: ${{ inputs.gcp_region }}
+      gcp_tf_bucket_name: ${{ inputs.gcp_tf_bucket_name }}
+      gcp_registry_name: ${{ inputs.gcp_registry_name }}
+      gcp_zone: ${{ inputs.gcp_zone }}
+      gcp_registry_hostname: ${{ inputs.gcp_registry_hostname }}
+    secrets:
+      GCP_SERVICE_ACCOUNT_FILE: ${{ secrets.GCP_SERVICE_ACCOUNT_FILE }}
+      GITUB_ACCESS_TOKEN: ${{ secrets.GITUB_ACCESS_TOKEN }}

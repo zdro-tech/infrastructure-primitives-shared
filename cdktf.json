@@ -1,0 +1,8 @@
+{
+  "language": "typescript",
+  "sendCrashReports": "false",
+  "terraformProviders": [],
+  "terraformModules": [],
+  "context": {},
+  "projectId": "23e1b314-191b-49a1-9c3d-5241ac1c75e1"
+}

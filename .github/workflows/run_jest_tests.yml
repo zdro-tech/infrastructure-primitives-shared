@@ -1,0 +1,37 @@
+name: Run Jest Tests
+on:
+  workflow_call:
+    inputs:
+      test_report_path:
+        required: true
+        type: string
+        description: 'Path to the test report files'
+      test_reporter_type:
+        required: true
+        type: string
+        description: 'Type of the test reporter'
+    secrets:
+      GITUB_ACCESS_TOKEN:
+          required: true
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          
+      - name: Set up Git credentials
+        run: |
+          git config --global url.https://${{ secrets.GITUB_ACCESS_TOKEN }}@github.com/.insteadOf ssh://git@github.com/
+      - run: npm ci
+      - run: npm test
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        if: success() || failure()
+        with:
+          name: Tests reports
+          path: ${{ inputs.test_report_path }}
+          reporter: ${{ inputs.test_reporter_type }}

@@ -1,0 +1,97 @@
+name: Deploy Infrastructure
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      stack_name:
+        required: false
+        type: string
+        default: "*"
+      working_dir:
+        required: false
+        type: string
+        default: ./infra
+      project_id:
+        required: true
+        type: string
+      gcp_region:
+        required: true
+        type: string
+      gcp_tf_bucket_name:
+        required: true
+        type: string
+      gcp_registry_name:
+        required: true
+        type: string
+      gcp_zone:
+        required: false
+        type: string
+      gcp_registry_hostname:
+        required: false
+        type: string
+    secrets:
+        GCP_SERVICE_ACCOUNT_FILE:
+            required: true
+        GITUB_ACCESS_TOKEN:
+            required: true
+jobs:
+  setup_infra:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set environment variables
+        run: |
+          echo "ENVIRONMENT=${{ inputs.environment }}" >> $GITHUB_ENV
+          echo "VARIABLES_CONFIG_PATH=${{ inputs.environment }}" >> $GITHUB_ENV
+          echo "GCP_PROJECT_ID=${{ inputs.project_id }}" >> $GITHUB_ENV
+          echo "GCP_REGION=${{ inputs.gcp_region }}" >> $GITHUB_ENV
+          echo "GCP_ZONE=${{ inputs.gcp_zone }}" >> $GITHUB_ENV
+          echo "GCP_TF_BUCKET_NAME=${{ inputs.gcp_tf_bucket_name }}" >> $GITHUB_ENV
+          echo "GCP_CONTAINER_REGISTRY_NAME=${{ inputs.gcp_registry_name }}" >> $GITHUB_ENV
+          echo "GCP_CONTAINER_REGISTRY_HOSTNAME=${{ inputs.gcp_registry_hostname }}" >> $GITHUB_ENV
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Google Auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_FILE }}
+          project_id: ${{ inputs.project_id }}
+          token_format: access_token
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Set up Git credentials
+        run: |
+          git config --global url.https://${{ secrets.GITUB_ACCESS_TOKEN }}@github.com/.insteadOf ssh://git@github.com/
+
+      - name: Install dependencies and cdktf-cli
+        working-directory: ${{ inputs.working_dir }}
+        run: |
+          npm install
+          npm install --global cdktf-cli@latest
+          npm run build
+
+      - name: Set Terraform Mode 
+        run: |
+          if [[ "${{ github.event_name }}" == "push" || "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "MODE=auto-approve-apply" >> $GITHUB_ENV
+          else
+            echo "MODE=plan-only" >> $GITHUB_ENV
+          fi
+      - name: Run Terraform CDK
+        uses: hashicorp/terraform-cdk-action@v4
+        with:
+          workingDirectory: ${{ inputs.working_dir }}
+          terraformVersion: 1.8.5
+          cdktfVersion: 0.20.7
+          stackName: ${{ inputs.stack_name }}
+          mode: ${{ env.MODE }}
+          githubToken: ${{ secrets.GITUB_ACCESS_TOKEN }}

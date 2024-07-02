@@ -1,0 +1,11 @@
+name: Npm Build
+on:
+  workflow_call:
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npm run build

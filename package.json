@@ -1,0 +1,30 @@
+{
+  "name": "infra-primitives-shared",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "prepare": "npm run build",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "update-primitives": "",
+    "update-infra-primitives": "",
+    "quick-push": "git add . && git commit -m 'Minor update' && git push",
+    "upDeps": "npm run quick-push"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "peerDependencies": {
+  },
+  "devDependencies": {
+    "@types/node": "^20.6.4",
+    "constructs": "^10.3.0",
+    "typescript": "^5.2.2",
+    "@cdktf/provider-google": "^13.24.0",
+    "aws-cdk": "^2.147.0",
+    "aws-cdk-lib": "^2.147.0",
+    "cdktf": "^0.20.7"
+  }
+}
