@@ -1,0 +1,77 @@
+name: Deploy JAR to GCP Artifact Registry
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      maven_repository_name:
+        required: true
+        type: string
+      project_id:
+        required: true
+        type: string
+      gcp_region:
+        required: true
+        type: string
+      gcp_tf_bucket_name:
+        required: true
+        type: string
+      gcp_registry_name:
+        required: true
+        type: string
+      gcp_zone:
+        required: false
+        type: string
+      gcp_registry_hostname:
+        required: false
+        type: string
+    secrets:
+      GCP_SERVICE_ACCOUNT_FILE:
+        required: true
+      GITUB_ACCESS_TOKEN:
+        required: false
+
+jobs:
+  deploy_jar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set environment variables
+        run: |
+          echo "ENVIRONMENT=${{ inputs.environment }}" >> $GITHUB_ENV
+          echo "VARIABLES_CONFIG_PATH=${{ inputs.environment }}" >> $GITHUB_ENV
+          echo "GCP_PROJECT_ID=${{ inputs.project_id }}" >> $GITHUB_ENV
+          echo "GCP_REGION=${{ inputs.gcp_region }}" >> $GITHUB_ENV
+          echo "GCP_ZONE=${{ inputs.gcp_zone }}" >> $GITHUB_ENV
+          echo "GCP_TF_BUCKET_NAME=${{ inputs.gcp_tf_bucket_name }}" >> $GITHUB_ENV
+          echo "GCP_CONTAINER_REGISTRY_NAME=${{ inputs.gcp_registry_name }}" >> $GITHUB_ENV
+          echo "GCP_CONTAINER_REGISTRY_HOSTNAME=${{ inputs.gcp_registry_hostname }}" >> $GITHUB_ENV
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: "adopt"
+          java-version: "21"
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew build
+
+      - name: Google Auth
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_FILE }}
+
+      - name: Publish JAR to GCP Artifact Registry
+        run: ./gradlew publish
+        env:
+          CI: true
+          GAR_LOCATION: ${{ inputs.gcp_region }}
+          PROJECT_ID: ${{ inputs.project_id }}
+          MAVEN_REPOSITORY_NAME: ${{ inputs.maven_repository_name }}
+          GCP_SERVICE_ACCOUNT_FILE: ${{ secrets.GCP_SERVICE_ACCOUNT_FILE }}
