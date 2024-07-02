@@ -84,7 +84,8 @@ jobs:
             -Dquarkus.profile=${{ inputs.environment }} \
             -Dquarkus.container-image.image=${{ env.FULL_IMAGE_NAME }}
       - name: Push Quarkus Application Image
-        run: >
+        run: |
           docker tag "${{ env.FULL_IMAGE_NAME }}" "${{ env.FULL_IMAGE_NAME }}:${{ github.sha }}"
           docker push "${{ env.FULL_IMAGE_NAME }}:${{ github.sha }}"
           docker push "${{ env.FULL_IMAGE_NAME }}:latest"
+        
