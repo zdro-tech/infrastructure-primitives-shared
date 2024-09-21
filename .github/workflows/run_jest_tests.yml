@@ -13,7 +13,8 @@ on:
     secrets:
       GITUB_ACCESS_TOKEN:
           required: true
-
+      GITUB_SSH_KEY:
+        required: false
 jobs:
   test:
     name: Run Tests
@@ -26,6 +27,12 @@ jobs:
       - name: Set up Git credentials
         run: |
           git config --global url.https://${{ secrets.GITUB_ACCESS_TOKEN }}@github.com/.insteadOf ssh://git@github.com/
+
+      - name: Setup Github SSH Agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.GITUB_SSH_KEY }}
+
       - run: npm ci
       - run: npm test
       - name: Test Report

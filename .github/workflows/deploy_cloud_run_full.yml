@@ -38,6 +38,8 @@ on:
         required: true
       GITUB_ACCESS_TOKEN:
         required: true
+      GITUB_SSH_KEY:
+        required: false
 
 jobs:
   deploy_image:
@@ -54,6 +56,7 @@ jobs:
     secrets:
       GCP_SERVICE_ACCOUNT_FILE: ${{ secrets.GCP_SERVICE_ACCOUNT_FILE }}
       GITUB_ACCESS_TOKEN: ${{ secrets.GITUB_ACCESS_TOKEN }}
+      GITUB_SSH_KEY: ${{ secrets.GITUB_SSH_KEY }}
 
   setup_infra:
     uses: zdro-tech/infrastructure-primitives-shared/.github/workflows/deploy_infra.yml@main
@@ -70,6 +73,7 @@ jobs:
     secrets:
       GCP_SERVICE_ACCOUNT_FILE: ${{ secrets.GCP_SERVICE_ACCOUNT_FILE }}
       GITUB_ACCESS_TOKEN: ${{ secrets.GITUB_ACCESS_TOKEN }}
+      GITUB_SSH_KEY: ${{ secrets.GITUB_SSH_KEY }}
 
   deploy_new_version:
     uses: zdro-tech/infrastructure-primitives-shared/.github/workflows/deploy_cloud_run.yml@main
@@ -87,3 +91,4 @@ jobs:
     secrets:
       GCP_SERVICE_ACCOUNT_FILE: ${{ secrets.GCP_SERVICE_ACCOUNT_FILE }}
       GITUB_ACCESS_TOKEN: ${{ secrets.GITUB_ACCESS_TOKEN }}
+      GITUB_SSH_KEY: ${{ secrets.GITUB_SSH_KEY }}

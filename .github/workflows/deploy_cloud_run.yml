@@ -34,6 +34,8 @@ on:
             required: true
         GITUB_ACCESS_TOKEN:
           required: false
+        GITUB_SSH_KEY:
+          required: false
 jobs:
   deploy_new_version:
     runs-on: ubuntu-latest
