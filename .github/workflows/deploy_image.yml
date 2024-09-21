@@ -73,7 +73,7 @@ jobs:
             -t "${{ env.FULL_IMAGE_NAME }}:${{ github.sha }}" \
             -t "${{ env.FULL_IMAGE_NAME }}:latest" \
             --build-arg GITUB_ACCESS_TOKEN=${{ secrets.GITUB_ACCESS_TOKEN }} \
-            --build-arg GITUB_SSH_KEY=${{ secrets.GITUB_SSH_KEY }} \
+            --build-arg GITUB_SSH_KEY="${{ secrets.GITUB_SSH_KEY }}" \
             --build-arg ENVIRONMENT=${{ inputs.environment }} \
             ./
           docker push "${{ inputs.gcp_region }}-docker.pkg.dev/${{ inputs.project_id }}/${{ inputs.gcp_registry_name }}/${{ inputs.image_name }}"
