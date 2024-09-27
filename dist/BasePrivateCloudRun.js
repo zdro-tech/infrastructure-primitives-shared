@@ -36,6 +36,9 @@ class BasePrivateCloudRun {
                 },
                 timeout: "3600s",
                 maxInstanceRequestConcurrency: config.maxInstanceRequestConcurrency ?? 1,
+                scaling: config.scaling ?? {
+                    maxInstanceCount: 50
+                },
                 containers: [
                     {
                         ports: { containerPort: config.port ?? 4000, name: "http1" },

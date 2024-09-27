@@ -1,6 +1,6 @@
 import { Construct } from "constructs";
 
-import { CloudRunV2Service, CloudRunV2ServiceTemplateContainersResources } from "@cdktf/provider-google/lib/cloud-run-v2-service";
+import { CloudRunV2Service, CloudRunV2ServiceTemplateContainersResources, CloudRunV2ServiceTemplateScaling } from "@cdktf/provider-google/lib/cloud-run-v2-service";
 import { DataGoogleComputeNetwork } from "@cdktf/provider-google/lib/data-google-compute-network";
 import { BaseGCPStackConfig } from "./BaseGCPStack.js";
 
@@ -11,6 +11,7 @@ export interface BasePrivateCloudRunConfig extends BaseGCPStackConfig {
   limits?: { [key: string]: string };
   port?: number;
   maxInstanceRequestConcurrency?: number;
+  scaling?: CloudRunV2ServiceTemplateScaling;
   executionEnvironment?: "EXECUTION_ENVIRONMENT_GEN1" | "EXECUTION_ENVIRONMENT_GEN2"
 }
 
@@ -50,7 +51,11 @@ export class BasePrivateCloudRun {
           }]
         },
         timeout: "3600s",
+
         maxInstanceRequestConcurrency: config.maxInstanceRequestConcurrency ?? 1,
+        scaling: config.scaling ?? {
+          maxInstanceCount: 50
+        },
         containers: [
           {
             ports: { containerPort: config.port ?? 4000, name: "http1" },

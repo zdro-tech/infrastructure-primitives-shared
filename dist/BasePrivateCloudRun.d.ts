@@ -1,5 +1,5 @@
 import { Construct } from "constructs";
-import { CloudRunV2Service, CloudRunV2ServiceTemplateContainersResources } from "@cdktf/provider-google/lib/cloud-run-v2-service";
+import { CloudRunV2Service, CloudRunV2ServiceTemplateContainersResources, CloudRunV2ServiceTemplateScaling } from "@cdktf/provider-google/lib/cloud-run-v2-service";
 import { DataGoogleComputeNetwork } from "@cdktf/provider-google/lib/data-google-compute-network";
 import { BaseGCPStackConfig } from "./BaseGCPStack.js";
 export interface BasePrivateCloudRunConfig extends BaseGCPStackConfig {
@@ -11,6 +11,7 @@ export interface BasePrivateCloudRunConfig extends BaseGCPStackConfig {
     };
     port?: number;
     maxInstanceRequestConcurrency?: number;
+    scaling?: CloudRunV2ServiceTemplateScaling;
     executionEnvironment?: "EXECUTION_ENVIRONMENT_GEN1" | "EXECUTION_ENVIRONMENT_GEN2";
 }
 export declare class BasePrivateCloudRun {
