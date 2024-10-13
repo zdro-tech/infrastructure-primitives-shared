@@ -10,6 +10,7 @@ export interface BasePrivateCloudRunConfig extends BaseGCPStackConfig {
         [key: string]: string;
     };
     port?: number;
+    serviceAccount?: string;
     maxInstanceRequestConcurrency?: number;
     scaling?: CloudRunV2ServiceTemplateScaling;
     executionEnvironment?: "EXECUTION_ENVIRONMENT_GEN1" | "EXECUTION_ENVIRONMENT_GEN2";

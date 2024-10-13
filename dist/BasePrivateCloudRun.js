@@ -35,6 +35,7 @@ class BasePrivateCloudRun {
                         }]
                 },
                 timeout: "3600s",
+                serviceAccount: this.config.serviceAccount ?? '',
                 maxInstanceRequestConcurrency: config.maxInstanceRequestConcurrency ?? 1,
                 scaling: config.scaling ?? {
                     maxInstanceCount: 50
