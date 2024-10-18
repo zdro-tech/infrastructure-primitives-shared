@@ -43,7 +43,6 @@ on:
           required: false
         extra_secrets:
           required: false
-          type: string
 jobs:
   setup_infra:
     runs-on: ubuntu-latest

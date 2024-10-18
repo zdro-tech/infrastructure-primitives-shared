@@ -41,7 +41,6 @@ on:
           required: false
         extra_secrets:
           required: false
-          type: string
 jobs:
   deploy_new_version:
     runs-on: ubuntu-latest
