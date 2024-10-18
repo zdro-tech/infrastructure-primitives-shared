@@ -61,11 +61,12 @@ jobs:
           done
 
       - name: Set extra secrets
-        if: ${{ secrets.extra_secrets != '' }}
         run: |
-          echo "${{ secrets.extra_secrets }}" | tr ',' '\n' | while read -r secret; do
-            echo "$secret" >> $GITHUB_ENV
-          done
+          if [ -n "${{ secrets.extra_secrets }}" ]; then
+            echo "${{ secrets.extra_secrets }}" | tr ',' '\n' | while read -r secret; do
+              echo "$secret" >> $GITHUB_ENV
+            done
+          fi
 
       - name: Set derived image full name
         run: echo "FULL_IMAGE_NAME=${{ inputs.gcp_region }}-docker.pkg.dev/${{ inputs.project_id }}/${{ inputs.gcp_registry_name }}/${{ inputs.image_name }}" >> $GITHUB_ENV

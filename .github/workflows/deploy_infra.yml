@@ -66,11 +66,12 @@ jobs:
           done
 
       - name: Set extra secrets
-        if: ${{ secrets.extra_secrets != '' }}
         run: |
-          echo "${{ secrets.extra_secrets }}" | tr ',' '\n' | while read -r secret; do
-            echo "$secret" >> $GITHUB_ENV
-          done
+          if [ -n "${{ secrets.extra_secrets }}" ]; then
+            echo "${{ secrets.extra_secrets }}" | tr ',' '\n' | while read -r secret; do
+              echo "$secret" >> $GITHUB_ENV
+            done
+          fi
 
       - name: Checkout
         uses: actions/checkout@v4
