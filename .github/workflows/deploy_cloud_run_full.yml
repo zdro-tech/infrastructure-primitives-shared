@@ -47,7 +47,7 @@ on:
         required: false
 jobs:
   deploy_image:
-    uses: zdro-tech/infrastructure-primitives-shared/.github/workflows/deploy_image.yml@dev
+    uses: zdro-tech/infrastructure-primitives-shared/.github/workflows/deploy_image.yml@main
     with:
       environment: ${{ inputs.environment }}
       image_name: ${{ inputs.image_name }}
@@ -65,7 +65,7 @@ jobs:
       extra_secrets: ${{ secrets.extra_secrets }}
 
   setup_infra:
-    uses: zdro-tech/infrastructure-primitives-shared/.github/workflows/deploy_infra.yml@dev
+    uses: zdro-tech/infrastructure-primitives-shared/.github/workflows/deploy_infra.yml@main
     with:
       environment: ${{ inputs.environment }}
       stack_name: ${{ inputs.stack_name }}
@@ -83,7 +83,7 @@ jobs:
       extra_secrets: ${{ secrets.extra_secrets }}
   
   deploy_new_version:
-    uses: zdro-tech/infrastructure-primitives-shared/.github/workflows/deploy_cloud_run.yml@dev
+    uses: zdro-tech/infrastructure-primitives-shared/.github/workflows/deploy_cloud_run.yml@main
     needs: [setup_infra, deploy_image]
     with:
       environment: ${{ inputs.environment }}
