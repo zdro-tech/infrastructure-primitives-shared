@@ -24,6 +24,7 @@ class BasePrivateCloudRun {
         const { region, imagename, cloudRunServiceName, resources, limits } = config;
         const cloudRun = new cloud_run_v2_service_1.CloudRunV2Service(this.scope, `cloud-run-web-service-${this.config.cloudRunServiceName}`, {
             launchStage: "BETA",
+            customAudiences: this.config.customAudiences ?? [],
             location: region,
             name: cloudRunServiceName,
             template: {

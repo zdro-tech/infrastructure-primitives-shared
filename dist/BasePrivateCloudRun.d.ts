@@ -14,6 +14,7 @@ export interface BasePrivateCloudRunConfig extends BaseGCPStackConfig {
     maxInstanceRequestConcurrency?: number;
     scaling?: CloudRunV2ServiceTemplateScaling;
     executionEnvironment?: "EXECUTION_ENVIRONMENT_GEN1" | "EXECUTION_ENVIRONMENT_GEN2";
+    customAudiences?: string[];
 }
 export declare class BasePrivateCloudRun {
     config: BasePrivateCloudRunConfig;

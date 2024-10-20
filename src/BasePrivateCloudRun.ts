@@ -13,7 +13,8 @@ export interface BasePrivateCloudRunConfig extends BaseGCPStackConfig {
   serviceAccount?: string;
   maxInstanceRequestConcurrency?: number;
   scaling?: CloudRunV2ServiceTemplateScaling;
-  executionEnvironment?: "EXECUTION_ENVIRONMENT_GEN1" | "EXECUTION_ENVIRONMENT_GEN2"
+  executionEnvironment?: "EXECUTION_ENVIRONMENT_GEN1" | "EXECUTION_ENVIRONMENT_GEN2",
+  customAudiences?: string[]
 }
 
 export class BasePrivateCloudRun {
@@ -40,6 +41,7 @@ export class BasePrivateCloudRun {
     const { region, imagename, cloudRunServiceName, resources, limits } = config
     const cloudRun = new CloudRunV2Service(this.scope, `cloud-run-web-service-${this.config.cloudRunServiceName}`, {
       launchStage: "BETA",
+      customAudiences: this.config.customAudiences ?? [],
       location: region,
       name: cloudRunServiceName,
 
