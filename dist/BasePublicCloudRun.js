@@ -18,7 +18,7 @@ class BasePublicCloudRun extends BasePrivateCloudRun_js_1.BasePrivateCloudRun {
         return privateCloudRun;
     }
     configurePublicAccess(cloudRun) {
-        const policy_data = new data_google_iam_policy_1.DataGoogleIamPolicy(this.scope, "datanoauth", {
+        const policy_data = new data_google_iam_policy_1.DataGoogleIamPolicy(this.scope, `datanoauth-${this.config.cloudRunServiceName}`, {
             binding: [
                 {
                     role: "roles/run.invoker",
@@ -26,13 +26,13 @@ class BasePublicCloudRun extends BasePrivateCloudRun_js_1.BasePrivateCloudRun {
                 },
             ],
         });
-        new cloud_run_service_iam_policy_1.CloudRunServiceIamPolicy(this.scope, "runsvciampolicy", {
+        new cloud_run_service_iam_policy_1.CloudRunServiceIamPolicy(this.scope, `runsvciampolicy-${this.config.cloudRunServiceName}`, {
             service: cloudRun.name,
             policyData: policy_data.policyData,
         });
     }
     configureDomainMapping(cloudRun) {
-        return new cloud_run_domain_mapping_1.CloudRunDomainMapping(this.scope, "GcpCDKCloudRunWebFrontDomain", {
+        return new cloud_run_domain_mapping_1.CloudRunDomainMapping(this.scope, `cloud-run-domain-mapping-${this.config.cloudRunServiceName}`, {
             location: this.config.region,
             name: this.config.domainName,
             metadata: {

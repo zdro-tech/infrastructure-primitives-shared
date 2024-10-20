@@ -16,13 +16,13 @@ class BasePrivateCloudRun {
         return cloudRun;
     }
     privateVPC(privateVPCName) {
-        return new data_google_compute_network_1.DataGoogleComputeNetwork(this.scope, 'retrieve-cloud-run-vpc', {
+        return new data_google_compute_network_1.DataGoogleComputeNetwork(this.scope, `retrieve-cloud-run-vpc-${this.config.cloudRunServiceName}`, {
             name: privateVPCName ?? 'h9th-cloud-run-postgres-redis'
         });
     }
     privateCloudRunService(config, vpcForPrivateAccess) {
         const { region, imagename, cloudRunServiceName, resources, limits } = config;
-        const cloudRun = new cloud_run_v2_service_1.CloudRunV2Service(this.scope, "GcpCDKCloudRunWebAPI", {
+        const cloudRun = new cloud_run_v2_service_1.CloudRunV2Service(this.scope, `cloud-run-web-service-${this.config.cloudRunServiceName}`, {
             launchStage: "BETA",
             location: region,
             name: cloudRunServiceName,

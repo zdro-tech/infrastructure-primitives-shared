@@ -29,12 +29,17 @@ on:
       gcp_registry_hostname:
         required: false
         type: string
+      extra_env_vars:
+        required: false
+        type: string
     secrets:
         GCP_SERVICE_ACCOUNT_FILE:
             required: true
         GITUB_ACCESS_TOKEN:
           required: false
         GITUB_SSH_KEY:
+          required: false
+        extra_secrets:
           required: false
 jobs:
   deploy_new_version:
@@ -50,6 +55,21 @@ jobs:
           echo "GCP_TF_BUCKET_NAME=${{ inputs.gcp_tf_bucket_name }}" >> $GITHUB_ENV
           echo "GCP_CONTAINER_REGISTRY_NAME=${{ inputs.gcp_registry_name }}" >> $GITHUB_ENV
           echo "GCP_CONTAINER_REGISTRY_HOSTNAME=${{ inputs.gcp_registry_hostname }}" >> $GITHUB_ENV
+
+      - name: Set extra environment variables
+        if: ${{ inputs.extra_env_vars != '' }}
+        run: |
+          echo "${{ inputs.extra_env_vars }}" | tr ',' '\n' | while read -r var; do
+            echo "$var" >> $GITHUB_ENV
+          done
+
+      - name: Set extra secrets
+        run: |
+          if [ -n "${{ secrets.extra_secrets }}" ]; then
+            echo "${{ secrets.extra_secrets }}" | tr ',' '\n' | while read -r secret; do
+              echo "$secret" >> $GITHUB_ENV
+            done
+          fi
 
       - name: Set derived image full name
         run: echo "FULL_IMAGE_NAME=${{ inputs.gcp_region }}-docker.pkg.dev/${{ inputs.project_id }}/${{ inputs.gcp_registry_name }}/${{ inputs.image_name }}" >> $GITHUB_ENV
