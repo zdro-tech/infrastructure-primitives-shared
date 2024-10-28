@@ -36,7 +36,7 @@ class BasePubSubSubscription {
             ackDeadlineSeconds: this.config.ackDeadlineSeconds ?? 60 * 10,
             retryPolicy: {
                 minimumBackoff: this.config.minimumBackoff ?? '2s',
-                maximumBackoff: this.config.maximumBackoff ?? '120s',
+                maximumBackoff: this.config.maximumBackoff ?? '600s',
             },
             pushConfig: {
                 pushEndpoint: this.config.pushEndpoint,
@@ -52,7 +52,7 @@ class BasePubSubSubscription {
             retainAckedMessages: false,
             deadLetterPolicy: {
                 deadLetterTopic: deadLetterTopicForSubscription.id,
-                maxDeliveryAttempts: this.config.maxDeliveryAttempts ?? 5
+                maxDeliveryAttempts: this.config.maxDeliveryAttempts ?? 30
             }
         });
         return topicSubscription;
