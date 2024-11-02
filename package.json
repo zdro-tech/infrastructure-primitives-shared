@@ -1,5 +1,5 @@
 {
-  "name": "infra-primitives-shared",
+  "name": "infrastructure-primitives-shared",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
