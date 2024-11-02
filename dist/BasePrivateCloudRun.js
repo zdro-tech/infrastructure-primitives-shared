@@ -11,11 +11,11 @@ class BasePrivateCloudRun {
         this.scope = scope;
     }
     configure(privateVPCName) {
-        const privateVPC = this.privateVPC(privateVPCName);
+        const privateVPC = this.fetchPrivateVPC(privateVPCName);
         const cloudRun = this.privateCloudRunService(this.config, privateVPC);
         return cloudRun;
     }
-    privateVPC(privateVPCName) {
+    fetchPrivateVPC(privateVPCName) {
         return new data_google_compute_network_1.DataGoogleComputeNetwork(this.scope, `retrieve-cloud-run-vpc-${this.config.cloudRunServiceName}`, {
             name: privateVPCName ?? 'h9th-cloud-run-postgres-redis'
         });
@@ -41,6 +41,7 @@ class BasePrivateCloudRun {
                 scaling: config.scaling ?? {
                     maxInstanceCount: 50
                 },
+                volumes: config.volumes,
                 containers: [
                     {
                         ports: { containerPort: config.port ?? 4000, name: "http1" },
@@ -50,10 +51,10 @@ class BasePrivateCloudRun {
                             startupCpuBoost: true,
                             limits: limits ?? { "cpu": "0.1", "memory": "256Mi" },
                         },
-                        env: [
-                            { name: "ENVIRONMENT", value: process.env.ENVIRONMENT },
-                            { name: "VARIABLES_CONFIG_PATH", value: process.env.VARIABLES_CONFIG_PATH }
-                        ],
+                        env: [...config.env ?? [], ...[
+                                { name: "ENVIRONMENT", value: process.env.ENVIRONMENT },
+                                { name: "VARIABLES_CONFIG_PATH", value: process.env.VARIABLES_CONFIG_PATH }
+                            ]],
                     },
                 ],
             },

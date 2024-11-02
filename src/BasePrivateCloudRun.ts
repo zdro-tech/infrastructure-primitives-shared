@@ -1,6 +1,6 @@
 import { Construct } from "constructs";
 
-import { CloudRunV2Service, CloudRunV2ServiceTemplateContainersResources, CloudRunV2ServiceTemplateScaling } from "@cdktf/provider-google/lib/cloud-run-v2-service";
+import { CloudRunV2Service, CloudRunV2ServiceTemplateContainersEnv, CloudRunV2ServiceTemplateContainersResources, CloudRunV2ServiceTemplateScaling, CloudRunV2ServiceTemplateVolumes } from "@cdktf/provider-google/lib/cloud-run-v2-service";
 import { DataGoogleComputeNetwork } from "@cdktf/provider-google/lib/data-google-compute-network";
 import { BaseGCPStackConfig } from "./BaseGCPStack.js";
 
@@ -14,7 +14,9 @@ export interface BasePrivateCloudRunConfig extends BaseGCPStackConfig {
   maxInstanceRequestConcurrency?: number;
   scaling?: CloudRunV2ServiceTemplateScaling;
   executionEnvironment?: "EXECUTION_ENVIRONMENT_GEN1" | "EXECUTION_ENVIRONMENT_GEN2",
-  customAudiences?: string[]
+  customAudiences?: string[],
+  volumes?: CloudRunV2ServiceTemplateVolumes[],
+  env?: CloudRunV2ServiceTemplateContainersEnv[]
 }
 
 export class BasePrivateCloudRun {
@@ -26,12 +28,12 @@ export class BasePrivateCloudRun {
   }
 
   configure(privateVPCName?: string): CloudRunV2Service {
-    const privateVPC = this.privateVPC(privateVPCName)
+    const privateVPC = this.fetchPrivateVPC(privateVPCName)
     const cloudRun = this.privateCloudRunService(this.config, privateVPC)
     return cloudRun
   }
 
-  privateVPC(privateVPCName?: string) {
+  fetchPrivateVPC(privateVPCName?: string) {
     return new DataGoogleComputeNetwork(this.scope, `retrieve-cloud-run-vpc-${this.config.cloudRunServiceName}`, {
       name: privateVPCName ?? 'h9th-cloud-run-postgres-redis'
     });
@@ -60,6 +62,7 @@ export class BasePrivateCloudRun {
         scaling: config.scaling ?? {
           maxInstanceCount: 50
         },
+        volumes: config.volumes,
         containers: [
           {
             ports: { containerPort: config.port ?? 4000, name: "http1" },
@@ -71,10 +74,11 @@ export class BasePrivateCloudRun {
 
               limits: limits ?? { "cpu": "0.1", "memory": "256Mi" },
             },
-            env: [
+
+            env: [...config.env ?? [], ...[
               { name: "ENVIRONMENT", value: process.env.ENVIRONMENT },
               { name: "VARIABLES_CONFIG_PATH", value: process.env.VARIABLES_CONFIG_PATH }
-            ],
+            ]],
 
           },
         ],
