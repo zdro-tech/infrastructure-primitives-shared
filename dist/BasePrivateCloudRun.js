@@ -55,6 +55,7 @@ class BasePrivateCloudRun {
                                 { name: "ENVIRONMENT", value: process.env.ENVIRONMENT },
                                 { name: "VARIABLES_CONFIG_PATH", value: process.env.VARIABLES_CONFIG_PATH }
                             ]],
+                        volumeMounts: config.volumeMounts
                     },
                 ],
             },

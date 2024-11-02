@@ -1,5 +1,5 @@
 import { Construct } from "constructs";
-import { CloudRunV2Service, CloudRunV2ServiceTemplateContainersEnv, CloudRunV2ServiceTemplateContainersResources, CloudRunV2ServiceTemplateScaling, CloudRunV2ServiceTemplateVolumes } from "@cdktf/provider-google/lib/cloud-run-v2-service";
+import { CloudRunV2Service, CloudRunV2ServiceTemplateContainersEnv, CloudRunV2ServiceTemplateContainersResources, CloudRunV2ServiceTemplateContainersVolumeMounts, CloudRunV2ServiceTemplateScaling, CloudRunV2ServiceTemplateVolumes } from "@cdktf/provider-google/lib/cloud-run-v2-service";
 import { DataGoogleComputeNetwork } from "@cdktf/provider-google/lib/data-google-compute-network";
 import { BaseGCPStackConfig } from "./BaseGCPStack.js";
 export interface BasePrivateCloudRunConfig extends BaseGCPStackConfig {
@@ -16,6 +16,7 @@ export interface BasePrivateCloudRunConfig extends BaseGCPStackConfig {
     executionEnvironment?: "EXECUTION_ENVIRONMENT_GEN1" | "EXECUTION_ENVIRONMENT_GEN2";
     customAudiences?: string[];
     volumes?: CloudRunV2ServiceTemplateVolumes[];
+    volumeMounts?: CloudRunV2ServiceTemplateContainersVolumeMounts[];
     env?: CloudRunV2ServiceTemplateContainersEnv[];
 }
 export declare class BasePrivateCloudRun {
