@@ -52,7 +52,7 @@ export class BasePubSubSubscription {
       topic: pubSubTopic.name,
       ackDeadlineSeconds: this.config.ackDeadlineSeconds ?? 60 * 10,
       retryPolicy: {
-        minimumBackoff: this.config.minimumBackoff ?? '2s',
+        minimumBackoff: this.config.minimumBackoff ?? '10s',
         maximumBackoff: this.config.maximumBackoff ?? '600s',
       },
 

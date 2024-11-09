@@ -68,12 +68,10 @@ export class BasePrivateCloudRun {
           {
             ports: { containerPort: config.port ?? 4000, name: "http1" },
             image: imagename,
-
             resources: resources ?? {
               cpuIdle: true,
               startupCpuBoost: true,
-
-              limits: limits ?? { "cpu": "0.1", "memory": "256Mi" },
+              limits: limits ?? { "cpu": "0.2", "memory": "256Mi" },
             },
 
             env: [...config.env ?? [], ...[
