@@ -17,14 +17,12 @@
   "author": "",
   "license": "ISC",
   "peerDependencies": {
-  },
-  "devDependencies": {
-    "@types/node": "^20.6.4",
-    "constructs": "^10.3.0",
-    "typescript": "^5.2.2",
-    "@cdktf/provider-google": "^13.24.0",
-    "aws-cdk": "^2.147.0",
-    "aws-cdk-lib": "^2.147.0",
-    "cdktf": "^0.20.7"
+    "@types/node": "^22.10.1",
+    "constructs": "^10.4.2",
+    "typescript": "^5.7.2",
+    "@cdktf/provider-google": "^14.11.0",
+    "aws-cdk": "^2.172.0",
+    "aws-cdk-lib": "^2.172.0",
+    "cdktf": "^0.20.10"
   }
 }
