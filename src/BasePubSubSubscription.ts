@@ -10,6 +10,7 @@ export interface BasePubSubSubscriptionConfig extends BaseGCPStackConfig {
   topicName: string;
   subscriptionName: string;
   pushEndpoint: string;
+  enableMessageOrdering: boolean;
   ackDeadlineSeconds?: number
   maxDeliveryAttempts?: number;
   minimumBackoff?: string;
@@ -38,7 +39,7 @@ export class BasePubSubSubscription {
     new PubsubSubscription(this.scope, `${this.config.topicName}.${this.config.subscriptionName}.subscription.dead-letter`, {
       name: `${this.config.topicName}.${this.config.subscriptionName}.dead-letter`,
       topic: deadLetterTopicForSubscription.name,
-      enableMessageOrdering: true,
+      enableMessageOrdering: 'enableMessageOrdering' in this?.config ? this.config.enableMessageOrdering : true,
       filter: this.config.filter || '',
       messageRetentionDuration: `${7 * 24 * 60 * 60}s`,
     })
@@ -65,7 +66,7 @@ export class BasePubSubSubscription {
       expirationPolicy: {
         ttl: ""
       },
-      enableMessageOrdering: true,
+      enableMessageOrdering: 'enableMessageOrdering' in this?.config ? this.config.enableMessageOrdering : true,
       messageRetentionDuration: `${7 * 24 * 60 * 60}s`,
       retainAckedMessages: false,
       deadLetterPolicy: {

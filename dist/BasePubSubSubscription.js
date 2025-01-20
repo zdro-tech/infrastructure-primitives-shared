@@ -23,7 +23,7 @@ class BasePubSubSubscription {
         new index_js_1.PubsubSubscription(this.scope, `${this.config.topicName}.${this.config.subscriptionName}.subscription.dead-letter`, {
             name: `${this.config.topicName}.${this.config.subscriptionName}.dead-letter`,
             topic: deadLetterTopicForSubscription.name,
-            enableMessageOrdering: true,
+            enableMessageOrdering: 'enableMessageOrdering' in this?.config ? this.config.enableMessageOrdering : true,
             filter: this.config.filter || '',
             messageRetentionDuration: `${7 * 24 * 60 * 60}s`,
         });
@@ -47,7 +47,7 @@ class BasePubSubSubscription {
             expirationPolicy: {
                 ttl: ""
             },
-            enableMessageOrdering: true,
+            enableMessageOrdering: 'enableMessageOrdering' in this?.config ? this.config.enableMessageOrdering : true,
             messageRetentionDuration: `${7 * 24 * 60 * 60}s`,
             retainAckedMessages: false,
             deadLetterPolicy: {

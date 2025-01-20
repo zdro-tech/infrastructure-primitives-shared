@@ -5,6 +5,7 @@ export interface BasePubSubSubscriptionConfig extends BaseGCPStackConfig {
     topicName: string;
     subscriptionName: string;
     pushEndpoint: string;
+    enableMessageOrdering: boolean;
     ackDeadlineSeconds?: number;
     maxDeliveryAttempts?: number;
     minimumBackoff?: string;
