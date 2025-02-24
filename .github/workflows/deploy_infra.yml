@@ -114,11 +114,11 @@ jobs:
             echo "MODE=plan-only" >> $GITHUB_ENV
           fi
       - name: Run Terraform CDK
-        uses: hashicorp/terraform-cdk-action@v4
+        uses: hashicorp/terraform-cdk-action@v7
         with:
           workingDirectory: ${{ inputs.working_dir }}
-          terraformVersion: 1.8.5
-          cdktfVersion: 0.20.7
+          terraformVersion: 1.10.5
+          cdktfVersion: 0.20.11
           stackName: ${{ inputs.stack_name }}
           mode: ${{ env.MODE }}
           githubToken: ${{ secrets.GITUB_ACCESS_TOKEN }}
