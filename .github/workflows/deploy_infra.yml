@@ -113,6 +113,11 @@ jobs:
           else
             echo "MODE=plan-only" >> $GITHUB_ENV
           fi
+      - name: Set Terraform Up
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.10.5
+
       - name: Run Terraform CDK
         uses: hashicorp/terraform-cdk-action@v7
         with:
