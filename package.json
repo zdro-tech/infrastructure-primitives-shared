@@ -17,8 +17,8 @@
   "author": "",
   "license": "ISC",
   "peerDependencies": {
-    "cdktf": "^0.20.11",
-    "@cdktf/provider-google": "^14.20.0",
+    "cdktf": "^0.20.12",
+    "@cdktf/provider-google": "^14.29.0",
     "aws-cdk": "^2.172.0",
     "aws-cdk-lib": "^2.172.0"
   },
