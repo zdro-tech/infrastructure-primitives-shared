@@ -39,7 +39,7 @@ class BasePrivateCloudRun {
                 serviceAccount: this.config.serviceAccount ?? '',
                 maxInstanceRequestConcurrency: config.maxInstanceRequestConcurrency ?? 1,
                 scaling: config.scaling ?? {
-                    maxInstanceCount: 50
+                    maxInstanceCount: 10
                 },
                 volumes: config.volumes,
                 containers: [
