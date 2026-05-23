@@ -24,9 +24,9 @@ jobs:
       - name: Run npm update
         run: |
           rm -f package-lock.json
-          npm install
-          npm update
-          npm ci
+          npm install --legacy-peer-deps
+          npm update --legacy-peer-deps
+          npm ci --legacy-peer-deps
           
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v7
