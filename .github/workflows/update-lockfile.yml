@@ -21,6 +21,16 @@ jobs:
         with:
           node-version: 'lts/*'
           
+      
+      - name: Setup SSH for private dependencies
+        env:
+          GITUB_SSH_KEY: ${{ secrets.GITUB_ACTIONS_SSH_DEV }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$GITUB_SSH_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          
       - name: Run npm update
         run: |
           rm -f package-lock.json
