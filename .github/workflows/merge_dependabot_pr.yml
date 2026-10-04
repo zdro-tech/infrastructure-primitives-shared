@@ -14,8 +14,22 @@ on:
         required: false
         type: string
         default: 'development.yml'
+      gcp_project_id:
+        required: false
+        type: string
+        default: ''
+      gcp_region:
+        required: false
+        type: string
+        default: ''
+      maven_repository_name:
+        required: false
+        type: string
+        default: ''
     secrets:
       GITUB_SSH_KEY:
+        required: false
+      GCP_SERVICE_ACCOUNT_FILE:
         required: false
 
 jobs:
@@ -61,6 +75,10 @@ jobs:
       - uses: zdro-tech/infrastructure-primitives-shared/.github/actions/install-build-test@main
         with:
           ssh_key: ${{ secrets.GITUB_SSH_KEY }}
+          gcp_credentials: ${{ secrets.GCP_SERVICE_ACCOUNT_FILE }}
+          gcp_project_id: ${{ inputs.gcp_project_id }}
+          gcp_region: ${{ inputs.gcp_region }}
+          maven_repository_name: ${{ inputs.maven_repository_name }}
 
   merge:
     name: Merge
