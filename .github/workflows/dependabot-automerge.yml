@@ -1,17 +1,21 @@
 name: Dependabot Auto-Merge
-on: pull_request_target
+on:
+  pull_request_target:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'Dependabot pull request to verify and merge'
+        required: true
 
 permissions:
   contents: write
   pull-requests: write
+  actions: write
 
 jobs:
   dependabot:
-    runs-on: ubuntu-latest
-    if: github.actor == 'dependabot[bot]'
-    steps:
-      - name: Auto-merge Dependabot PRs
-        run: gh pr merge --auto --merge "$PR_URL"
-        env:
-          PR_URL: ${{ github.event.pull_request.html_url }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    uses: zdro-tech/infrastructure-primitives-shared/.github/workflows/merge_dependabot_pr.yml@main
+    with:
+      pr_number: ${{ inputs.pr_number }}
+    secrets:
+      GITUB_SSH_KEY: ${{ secrets.GITUB_ACTIONS_SSH_DEV }}

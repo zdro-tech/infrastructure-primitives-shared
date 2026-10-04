@@ -1,0 +1,84 @@
+name: Merge Dependabot pull request
+on:
+  workflow_call:
+    inputs:
+      pr_number:
+        required: false
+        type: string
+        default: ''
+      caller_workflow:
+        required: false
+        type: string
+        default: 'dependabot-automerge.yml'
+      deploy_workflow:
+        required: false
+        type: string
+        default: 'development.yml'
+    secrets:
+      GITUB_SSH_KEY:
+        required: false
+
+jobs:
+  # Workflows started by Dependabot cannot read Actions secrets, so the pull request is handed to a run that can.
+  hand_off:
+    name: Hand off
+    if: github.event_name == 'pull_request_target' && github.event.pull_request.user.login == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run "${{ inputs.caller_workflow }}" --repo "${{ github.repository }}" --ref "${{ github.event.repository.default_branch }}" -f pr_number="${{ github.event.pull_request.number }}"
+
+  verify:
+    name: Verify
+    if: github.event_name == 'workflow_dispatch' && inputs.pr_number != ''
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      head_sha: ${{ steps.pr.outputs.head_sha }}
+    steps:
+      - name: Read pull request
+        id: pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          pr=$(gh api "repos/${{ github.repository }}/pulls/${{ inputs.pr_number }}")
+          if [ "$(jq -r '.user.login' <<< "$pr")" != "dependabot[bot]" ] || [ "$(jq -r '.state' <<< "$pr")" != "open" ]; then
+            echo "Pull request ${{ inputs.pr_number }} is not an open Dependabot pull request"
+            exit 1
+          fi
+          echo "head_sha=$(jq -r '.head.sha' <<< "$pr")" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ steps.pr.outputs.head_sha }}
+          persist-credentials: false
+
+      - uses: zdro-tech/infrastructure-primitives-shared/.github/actions/install-build-test@main
+        with:
+          ssh_key: ${{ secrets.GITUB_SSH_KEY }}
+
+  merge:
+    name: Merge
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write
+    steps:
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          DEPLOY_WORKFLOW: ${{ inputs.deploy_workflow }}
+        run: |
+          gh pr merge "${{ inputs.pr_number }}" --repo "$REPO" --merge --match-head-commit "${{ needs.verify.outputs.head_sha }}"
+
+          # Merges made with the workflow token do not start other workflows, so the deploy is started here.
+          if gh api "repos/$REPO/contents/.github/workflows/$DEPLOY_WORKFLOW" --silent 2>/dev/null; then
+            gh workflow run "$DEPLOY_WORKFLOW" --repo "$REPO" --ref "${{ github.event.repository.default_branch }}"
+          fi

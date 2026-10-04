@@ -1,0 +1,67 @@
+name: Install, build and test
+description: Installs the root and infra npm projects, then builds and tests them
+inputs:
+  ssh_key:
+    description: 'SSH key for private git dependencies'
+    required: false
+    default: ''
+  refresh_lockfiles:
+    description: 'Delete package-lock.json files and resolve every dependency again'
+    required: false
+    default: 'false'
+  node_version:
+    required: false
+    default: '24'
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v6
+      with:
+        node-version: ${{ inputs.node_version }}
+
+    - name: Authorize git dependencies
+      shell: bash
+      env:
+        SSH_KEY: ${{ inputs.ssh_key }}
+      run: |
+        if [ -n "$SSH_KEY" ]; then
+          mkdir -p ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+        else
+          git config --global url."https://github.com/".insteadOf "ssh://git@github.com/"
+          git config --global --add url."https://github.com/".insteadOf "git@github.com:"
+        fi
+
+    - name: Install, build and test
+      shell: bash
+      env:
+        REFRESH_LOCKFILES: ${{ inputs.refresh_lockfiles }}
+        CI: "true"
+      run: |
+        install_and_build() {
+          echo "::group::Install and build $1"
+          (
+            cd "$1"
+            if [ "$REFRESH_LOCKFILES" = "true" ]; then
+              rm -f package-lock.json
+              npm install
+            else
+              npm ci
+            fi
+            npm run build --if-present
+          )
+          echo "::endgroup::"
+        }
+
+        if [ -f package.json ]; then
+          install_and_build .
+          test_script=$(jq -r '.scripts.test // ""' package.json)
+          if [ -n "$test_script" ] && [[ "$test_script" != *"no test specified"* ]]; then
+            npm test
+          fi
+        fi
+        if [ -f infra/package.json ]; then
+          install_and_build infra
+        fi

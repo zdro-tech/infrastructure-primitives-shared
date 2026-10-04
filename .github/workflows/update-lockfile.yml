@@ -3,43 +3,13 @@ on:
   schedule:
     - cron: '0 0 * * 0' # Every Sunday at midnight
   workflow_dispatch:
-  pull_request:
-    types: [closed]
 
 permissions:
   contents: write
+  actions: write
 
 jobs:
   update-lockfile:
-    if: github.event_name != 'pull_request' || (github.event.pull_request.merged == true && github.event.pull_request.user.login == 'dependabot[bot]')
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 'lts/*'
-          
-      
-      - name: Setup SSH for private dependencies
-        env:
-          GITUB_SSH_KEY: ${{ secrets.GITUB_ACTIONS_SSH_DEV }}
-        run: |
-          mkdir -p ~/.ssh
-          echo "$GITUB_SSH_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
-          
-      - name: Run npm update
-        run: |
-          rm -f package-lock.json
-          npm install
-          npm update
-          npm ci
-          
-      - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v7
-        with:
-          commit_message: "chore(deps): update package-lock.json"
-          branch: main
+    uses: zdro-tech/infrastructure-primitives-shared/.github/workflows/refresh_lockfiles.yml@main
+    secrets:
+      GITUB_SSH_KEY: ${{ secrets.GITUB_ACTIONS_SSH_DEV }}

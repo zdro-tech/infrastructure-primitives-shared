@@ -1,0 +1,54 @@
+name: Refresh lockfiles
+on:
+  workflow_call:
+    inputs:
+      deploy_workflow:
+        required: false
+        type: string
+        default: 'development.yml'
+        description: 'Workflow to run after the refreshed lockfiles are pushed'
+    secrets:
+      GITUB_SSH_KEY:
+        required: false
+
+jobs:
+  refresh:
+    name: Refresh lockfiles
+    runs-on: ubuntu-latest
+    concurrency:
+      group: refresh-lockfiles-${{ github.repository }}
+    permissions:
+      contents: write
+      actions: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: main
+
+      - uses: zdro-tech/infrastructure-primitives-shared/.github/actions/install-build-test@main
+        with:
+          ssh_key: ${{ secrets.GITUB_SSH_KEY }}
+          refresh_lockfiles: 'true'
+
+      - name: Commit and deploy
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DEPLOY_WORKFLOW: ${{ inputs.deploy_workflow }}
+        run: |
+          for lockfile in package-lock.json infra/package-lock.json; do
+            [ -f "$lockfile" ] && git add "$lockfile"
+          done
+          if git diff --cached --quiet; then
+            echo "Lockfiles are already up to date"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Refresh package-lock.json"
+          git pull --rebase --autostash origin main
+          git push origin HEAD:main
+
+          # Pushes made with the workflow token do not start other workflows, so the deploy is started here.
+          if [ -f ".github/workflows/$DEPLOY_WORKFLOW" ]; then
+            gh workflow run "$DEPLOY_WORKFLOW" --ref main
+          fi
