@@ -50,6 +50,10 @@ on:
 jobs:
   setup_infra:
     runs-on: ubuntu-latest
+    # Two applies against the same Terraform state fail on the state lock, so they run one at a time.
+    concurrency:
+      group: deploy-infra-${{ inputs.gcp_tf_bucket_name }}-${{ inputs.stack_name }}
+      cancel-in-progress: false
     steps:
       - name: Set environment variables
         run: |
