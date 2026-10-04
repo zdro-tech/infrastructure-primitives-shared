@@ -130,4 +130,4 @@ jobs:
           cdktfVersion: 0.20.11
           stackName: ${{ inputs.stack_name }}
           mode: ${{ env.MODE }}
-          githubToken: ${{ secrets.GITUB_ACCESS_TOKEN }}
+          githubToken: ${{ github.token }}
