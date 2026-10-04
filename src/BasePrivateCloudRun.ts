@@ -1,7 +1,7 @@
 import { Construct } from "constructs";
 
-import { CloudRunV2Service, CloudRunV2ServiceTemplateContainersEnv, CloudRunV2ServiceTemplateContainersResources, CloudRunV2ServiceTemplateContainersVolumeMounts, CloudRunV2ServiceTemplateScaling, CloudRunV2ServiceTemplateVolumes } from "@cdktf/provider-google/lib/cloud-run-v2-service";
-import { DataGoogleComputeNetwork } from "@cdktf/provider-google/lib/data-google-compute-network";
+import { CloudRunV2Service, CloudRunV2ServiceTemplateContainersEnv, CloudRunV2ServiceTemplateContainersResources, CloudRunV2ServiceTemplateContainersVolumeMounts, CloudRunV2ServiceTemplateScaling, CloudRunV2ServiceTemplateVolumes } from "@cdktn/provider-google/lib/cloud-run-v2-service";
+import { DataGoogleComputeNetwork } from "@cdktn/provider-google/lib/data-google-compute-network";
 import { BaseGCPStackConfig } from "./BaseGCPStack.js";
 
 export interface BasePrivateCloudRunConfig extends BaseGCPStackConfig {

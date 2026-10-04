@@ -37,7 +37,7 @@ on:
       node_version:
         required: false
         type: string
-        default: '20'
+        default: '24'
     secrets:
         GCP_SERVICE_ACCOUNT_FILE:
           required: true
@@ -103,31 +103,25 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.GITUB_SSH_KEY }}
 
-      - name: Install dependencies and cdktf-cli
+      - name: Install dependencies
         working-directory: ${{ inputs.working_dir }}
         run: |
           npm install
-          npm install --global cdktf-cli@latest
           npm run build
 
-      - name: Set Terraform Mode 
-        run: |
-          if [[ "${{ github.event_name }}" == "push" || "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            echo "MODE=auto-approve-apply" >> $GITHUB_ENV
-          else
-            echo "MODE=plan-only" >> $GITHUB_ENV
-          fi
       - name: Set Terraform Up
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.10.5
+          terraform_version: 1.15.8
+          terraform_wrapper: false
 
-      - name: Run Terraform CDK
-        uses: hashicorp/terraform-cdk-action@v7
-        with:
-          workingDirectory: ${{ inputs.working_dir }}
-          terraformVersion: 1.10.5
-          cdktfVersion: 0.20.11
-          stackName: ${{ inputs.stack_name }}
-          mode: ${{ env.MODE }}
-          githubToken: ${{ github.token }}
+      - name: Run CDK Terrain
+        working-directory: ${{ inputs.working_dir }}
+        env:
+          CI: "true"
+        run: |
+          if [[ "${{ github.event_name }}" == "push" || "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            npx --yes cdktn-cli@0.24.0 deploy '${{ inputs.stack_name }}' --auto-approve
+          else
+            npx --yes cdktn-cli@0.24.0 diff '${{ inputs.stack_name }}'
+          fi

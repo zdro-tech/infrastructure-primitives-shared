@@ -1,6 +1,6 @@
 import { Construct } from "constructs";
-import { CloudRunDomainMapping } from "@cdktf/provider-google/lib/cloud-run-domain-mapping";
-import { CloudRunV2Service } from "@cdktf/provider-google/lib/cloud-run-v2-service";
+import { CloudRunDomainMapping } from "@cdktn/provider-google/lib/cloud-run-domain-mapping";
+import { CloudRunV2Service } from "@cdktn/provider-google/lib/cloud-run-v2-service";
 import { BasePrivateCloudRun, BasePrivateCloudRunConfig } from "./BasePrivateCloudRun.js";
 export interface BasePublicCloudRunConfig extends BasePrivateCloudRunConfig {
     domainName: string;

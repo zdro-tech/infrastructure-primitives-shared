@@ -1,6 +1,6 @@
 import { Construct } from "constructs";
 import { BaseGCPStackConfig } from "./BaseGCPStack.js";
-import { PubsubSubscription } from "@cdktf/provider-google/lib/pubsub-subscription/index.js";
+import { PubsubSubscription } from "@cdktn/provider-google/lib/pubsub-subscription/index.js";
 export interface BasePubSubSubscriptionConfig extends BaseGCPStackConfig {
     topicName: string;
     subscriptionName: string;

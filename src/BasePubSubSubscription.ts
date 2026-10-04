@@ -1,10 +1,10 @@
 import { Construct } from "constructs";
 
 import { BaseGCPStackConfig } from "./BaseGCPStack.js";
-import { PubsubSubscription } from "@cdktf/provider-google/lib/pubsub-subscription/index.js";
-import { DataGooglePubsubTopic } from "@cdktf/provider-google/lib/data-google-pubsub-topic/index.js";
-import { DataGoogleServiceAccount } from "@cdktf/provider-google/lib/data-google-service-account/index.js";
-import { PubsubTopic } from "@cdktf/provider-google/lib/pubsub-topic/index.js";
+import { PubsubSubscription } from "@cdktn/provider-google/lib/pubsub-subscription/index.js";
+import { DataGooglePubsubTopic } from "@cdktn/provider-google/lib/data-google-pubsub-topic/index.js";
+import { DataGoogleServiceAccount } from "@cdktn/provider-google/lib/data-google-service-account/index.js";
+import { PubsubTopic } from "@cdktn/provider-google/lib/pubsub-topic/index.js";
 
 export interface BasePubSubSubscriptionConfig extends BaseGCPStackConfig {
   topicName: string;
@@ -42,6 +42,10 @@ export class BasePubSubSubscription {
       enableMessageOrdering: 'enableMessageOrdering' in this?.config ? this.config.enableMessageOrdering : true,
       filter: this.config.filter || '',
       messageRetentionDuration: `${7 * 24 * 60 * 60}s`,
+      // Without this the subscription is deleted after 31 days without a pull and dead letters are dropped.
+      expirationPolicy: {
+        ttl: ""
+      },
     })
 
     const pubSubAuthServiceAccount = new DataGoogleServiceAccount(this.scope, `${this.config.topicName}.${this.config.subscriptionName}-pub-sub-push-auth`, {

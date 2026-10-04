@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BasePubSubSubscription = void 0;
-const index_js_1 = require("@cdktf/provider-google/lib/pubsub-subscription/index.js");
-const index_js_2 = require("@cdktf/provider-google/lib/data-google-pubsub-topic/index.js");
-const index_js_3 = require("@cdktf/provider-google/lib/data-google-service-account/index.js");
-const index_js_4 = require("@cdktf/provider-google/lib/pubsub-topic/index.js");
+const index_js_1 = require("@cdktn/provider-google/lib/pubsub-subscription/index.js");
+const index_js_2 = require("@cdktn/provider-google/lib/data-google-pubsub-topic/index.js");
+const index_js_3 = require("@cdktn/provider-google/lib/data-google-service-account/index.js");
+const index_js_4 = require("@cdktn/provider-google/lib/pubsub-topic/index.js");
 class BasePubSubSubscription {
     config;
     scope;
@@ -26,6 +26,10 @@ class BasePubSubSubscription {
             enableMessageOrdering: 'enableMessageOrdering' in this?.config ? this.config.enableMessageOrdering : true,
             filter: this.config.filter || '',
             messageRetentionDuration: `${7 * 24 * 60 * 60}s`,
+            // Without this the subscription is deleted after 31 days without a pull and dead letters are dropped.
+            expirationPolicy: {
+                ttl: ""
+            },
         });
         const pubSubAuthServiceAccount = new index_js_3.DataGoogleServiceAccount(this.scope, `${this.config.topicName}.${this.config.subscriptionName}-pub-sub-push-auth`, {
             accountId: 'pub-sub-push-auth',

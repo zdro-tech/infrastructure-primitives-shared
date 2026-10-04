@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BasePrivateCloudRun = void 0;
-const cloud_run_v2_service_1 = require("@cdktf/provider-google/lib/cloud-run-v2-service");
-const data_google_compute_network_1 = require("@cdktf/provider-google/lib/data-google-compute-network");
+const cloud_run_v2_service_1 = require("@cdktn/provider-google/lib/cloud-run-v2-service");
+const data_google_compute_network_1 = require("@cdktn/provider-google/lib/data-google-compute-network");
 class BasePrivateCloudRun {
     config;
     scope;

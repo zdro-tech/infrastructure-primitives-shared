@@ -1,5 +1,5 @@
 import { Construct } from "constructs";
-import { TerraformStack } from "cdktf";
+import { TerraformStack } from "cdktn";
 interface BaseGCPStackConfig {
     region: string;
     zone: string;

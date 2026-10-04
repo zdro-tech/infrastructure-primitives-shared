@@ -1,9 +1,9 @@
 import { Construct } from "constructs";
 
-import { DataGoogleIamPolicy } from "@cdktf/provider-google/lib/data-google-iam-policy";
-import { CloudRunServiceIamPolicy } from "@cdktf/provider-google/lib/cloud-run-service-iam-policy";
-import { CloudRunDomainMapping } from "@cdktf/provider-google/lib/cloud-run-domain-mapping";
-import { CloudRunV2Service } from "@cdktf/provider-google/lib/cloud-run-v2-service";
+import { DataGoogleIamPolicy } from "@cdktn/provider-google/lib/data-google-iam-policy";
+import { CloudRunServiceIamPolicy } from "@cdktn/provider-google/lib/cloud-run-service-iam-policy";
+import { CloudRunDomainMapping } from "@cdktn/provider-google/lib/cloud-run-domain-mapping";
+import { CloudRunV2Service } from "@cdktn/provider-google/lib/cloud-run-v2-service";
 import { BasePrivateCloudRun, BasePrivateCloudRunConfig } from "./BasePrivateCloudRun.js";
 
 export interface BasePublicCloudRunConfig extends BasePrivateCloudRunConfig {

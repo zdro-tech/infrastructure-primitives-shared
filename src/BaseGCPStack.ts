@@ -1,7 +1,7 @@
 import { Construct } from "constructs";
-import { TerraformStack, GcsBackend } from "cdktf";
+import { TerraformStack, GcsBackend } from "cdktn";
 
-import { GoogleProvider } from "@cdktf/provider-google/lib/provider";
+import { GoogleProvider } from "@cdktn/provider-google/lib/provider";
 
 interface BaseGCPStackConfig {
   region: string;

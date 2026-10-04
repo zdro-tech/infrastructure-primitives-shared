@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BasePublicCloudRun = void 0;
-const data_google_iam_policy_1 = require("@cdktf/provider-google/lib/data-google-iam-policy");
-const cloud_run_service_iam_policy_1 = require("@cdktf/provider-google/lib/cloud-run-service-iam-policy");
-const cloud_run_domain_mapping_1 = require("@cdktf/provider-google/lib/cloud-run-domain-mapping");
+const data_google_iam_policy_1 = require("@cdktn/provider-google/lib/data-google-iam-policy");
+const cloud_run_service_iam_policy_1 = require("@cdktn/provider-google/lib/cloud-run-service-iam-policy");
+const cloud_run_domain_mapping_1 = require("@cdktn/provider-google/lib/cloud-run-domain-mapping");
 const BasePrivateCloudRun_js_1 = require("./BasePrivateCloudRun.js");
 class BasePublicCloudRun extends BasePrivateCloudRun_js_1.BasePrivateCloudRun {
     config;
